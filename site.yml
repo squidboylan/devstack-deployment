@@ -1,0 +1,28 @@
+---
+- name: provision server
+  hosts: cloud
+  connection: local
+  vars_files:
+    - "vars/{{ env }}.yml"
+  roles:
+    - create_server
+
+- name: install python2 so we can use ansible
+  hosts: devstackservers
+  user: ubuntu
+  become: true
+  become_user: root
+  gather_facts: no
+  roles:
+    - python2
+
+- name: prepare devstack
+  hosts: devstackservers
+  user: ubuntu
+  become: true
+  become_user: root
+  vars_files:
+    - "vars/{{ env }}.yml"
+  roles:
+    - fail2ban
+    - devstack

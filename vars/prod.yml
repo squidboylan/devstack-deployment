@@ -1,0 +1,21 @@
+---
+
+# The cloud from ~/.config/openstack/clouds.yml to use
+auth:
+  cloud: dreamcompute
+
+devstack:
+
+  # Name of the network to put the server on
+  network: "public"
+
+  server_name: "devstack3"
+
+  # Nova flavor to use
+  flavor: 500
+
+  # OS image to use
+  image: Ubuntu-16.04
+
+# ssh key to put on the server
+key_name: raynor

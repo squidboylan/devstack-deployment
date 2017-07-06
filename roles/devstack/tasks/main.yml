@@ -1,0 +1,43 @@
+---
+- name: create stack user
+  user:
+    name: stack
+    home: /opt/stack
+    shell: /bin/bash
+
+- name: clone devstack
+  git:
+    repo: https://github.com/openstack-dev/devstack
+    dest: /opt/stack/devstack
+
+- name: chown devstack repo
+  file:
+    path: /opt/stack/devstack
+    state: directory
+    recurse: yes
+    owner: stack
+    group: stack
+
+- name: copy local.conf to remote host
+  copy:
+    dest: /opt/stack/devstack/local.conf
+    src: local.conf
+    owner: stack
+    group: stack
+
+  #- name: copy ceph.conf to remote host
+  #copy:
+      #dest: /etc/ceph/ceph.conf
+      #src: ceph.conf
+
+      #- name: copy ceph.client.admin.keyring to remote host
+      #copy:
+      #dest: /etc/ceph/ceph.client.admin.keyring
+      #src: ceph.client.admin.keyring
+
+- name: give stack user passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    insertafter: EOF
+    line: 'stack ALL=(ALL) NOPASSWD: ALL'
