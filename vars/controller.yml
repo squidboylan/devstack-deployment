@@ -17,5 +17,9 @@ devstack:
   # OS image to use
   image: Ubuntu-16.04
 
+  services: controller
+
+  admin_password: admin
+
 # ssh key to put on the server
-key_name: raynor
+key_name: abathur

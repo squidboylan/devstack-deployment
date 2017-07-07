@@ -19,9 +19,9 @@
     group: stack
 
 - name: copy local.conf to remote host
-  copy:
+  template:
     dest: /opt/stack/devstack/local.conf
-    src: local.conf
+    src: "local-{{ devstack.services }}.conf.j2"
     owner: stack
     group: stack
 
