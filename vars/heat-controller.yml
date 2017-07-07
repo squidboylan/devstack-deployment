@@ -9,7 +9,7 @@ devstack:
   # Name of the network to put the server on
   network: "public"
 
-  server_name: "devstack4"
+  server_name: "devstack1"
 
   # Nova flavor to use
   flavor: 500
@@ -17,9 +17,7 @@ devstack:
   # OS image to use
   image: Ubuntu-16.04
 
-  services: compute
-
-  controller_node: 208.113.130.219
+  services: 'heat-controller'
 
   admin_password: admin
 

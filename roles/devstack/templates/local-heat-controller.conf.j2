@@ -1,0 +1,102 @@
+[[local|localrc]]
+#######
+# MISC #
+########
+FLAT_INTERFACE=ens3
+FIXED_RANGE=10.4.128.0/20
+FIXED_NETWORK_SIZE=4096
+FLOATING_RANGE=192.168.42.128/25
+ADMIN_PASSWORD={{ devstack.admin_password }}
+DATABASE_PASSWORD=$ADMIN_PASSWORD
+RABBIT_PASSWORD=$ADMIN_PASSWORD
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+#SERVICE_TOKEN = <this is generated after running stack.sh>
+
+# Reclone each time
+#RECLONE=yes
+
+# Enable Logging
+LOGFILE=/opt/stack/logs/stack.sh.log
+VERBOSE=True
+LOG_COLOR=True
+SCREEN_LOGDIR=/opt/stack/logs
+
+#################
+# PRE-REQUISITE #
+#################
+ENABLED_SERVICES=rabbit,mysql,key
+ENABLED_SERVICES+=,horizon,n-novnc
+
+#########
+## CEPH #
+#########
+enable_plugin devstack-plugin-ceph https://github.com/openstack/devstack-plugin-ceph
+
+# DevStack will create a loop-back disk formatted as XFS to store the
+# Ceph data.
+CEPH_LOOPBACK_DISK_SIZE=30G
+
+# Ceph cluster fsid
+CEPH_FSID=$(uuidgen)
+
+# Glance pool, pgs and user
+GLANCE_CEPH_USER=glance
+GLANCE_CEPH_POOL=images
+GLANCE_CEPH_POOL_PG=8
+GLANCE_CEPH_POOL_PGP=8
+
+# Nova pool and pgs
+NOVA_CEPH_POOL=vms
+NOVA_CEPH_POOL_PG=8
+NOVA_CEPH_POOL_PGP=8
+
+# Cinder pool, pgs and user
+CINDER_CEPH_POOL=volumes
+CINDER_CEPH_POOL_PG=8
+CINDER_CEPH_POOL_PGP=8
+CINDER_CEPH_USER=cinder
+CINDER_CEPH_UUID=$(uuidgen)
+
+# Cinder backup pool, pgs and user
+CINDER_BAK_CEPH_POOL=backup
+CINDER_BAK_CEPH_POOL_PG=8
+CINDER_BAKCEPH_POOL_PGP=8
+CINDER_BAK_CEPH_USER=cinder-bak
+
+# How many replicas are to be configured for your Ceph cluster
+CEPH_REPLICAS=${CEPH_REPLICAS:-1}
+
+# Connect DevStack to an existing Ceph cluster
+REMOTE_CEPH=False
+REMOTE_CEPH_ADMIN_KEY_PATH=/etc/ceph/ceph.client.admin.keyring
+
+#####################
+## GLANCE – IMAGE SERVICE #
+###########################
+ENABLED_SERVICES+=,g-api,g-reg
+
+##################################
+## CINDER – BLOCK DEVICE SERVICE #
+##################################
+ENABLED_SERVICES+=,cinder,c-api,c-vol,c-sch,c-bak
+CINDER_DRIVER=ceph
+CINDER_ENABLED_BACKENDS=ceph
+
+###########################
+## NOVA – COMPUTE SERVICE #
+###########################
+ENABLED_SERVICES+=,n-api,n-api-meta,n-cauth,n-crt,n-cpu,n-cond,n-sch,placement-api
+LIBVIRT_TYPE=qemu
+
+###########################
+#NEUTRON
+###########################
+ENABLED_SERVICES+=,neutron,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-lbaas
+
+###########################
+#HEAT
+###########################
+ENABLED_SERVICES+=,heat,h-api,h-api-cfn,h-api-cw,h-eng
+IMAGE_URLS+=",http://download.fedoraproject.org/pub/fedora/linux/updates/20/Images/x86_64/Fedora-x86_64-20-20140407-sda.qcow2"
+# 32bit image (~640MB)
+IMAGE_URLS+=",http://download.fedoraproject.org/pub/fedora/linux/updates/20/Images/i386/Fedora-i386-20-20140407-sda.qcow2"
